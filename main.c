@@ -1,8 +1,17 @@
 #include<stdlib.h>
 #include<stdio.h>
+#include<pthread.h>
 #include<time.h>
 
-int serial_mandlebot(int coluna, int linha, int max_inter){
+typedef struct{
+    int id;
+    int num_threads;
+    int inicio;
+    int fim;
+    int **resultado_matriz;
+}dados_thread;
+
+void serial_mandlebot(int coluna, int linha, int max_inter){
     int resultado_matriz[coluna][linha];
     double dx = 3.0 / coluna;
     double dy = 3.0 / linha;
@@ -47,6 +56,10 @@ for(int i=0;i<linha;i++){
     free(resultado_matriz[i]);
 }
 free(resultado_matriz);
+}
+
+void pthreads_mandlebot(int coluna, int linha, int max_inter, int num_threads){
+
 }
 
 
