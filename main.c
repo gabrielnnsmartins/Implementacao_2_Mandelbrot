@@ -1,6 +1,6 @@
 #include<stdlib.h>
 #include<stdio.h>
-#include<threads.h>
+#include<time.h>
 
 int serial_mandlebot(int coluna, int linha, int max_inter){
     int resultado_matriz[coluna][linha];
@@ -18,7 +18,7 @@ int serial_mandlebot(int coluna, int linha, int max_inter){
     y = 1.5 - (lin*dy);
 
     while(inter< max_inter){
-        if ((zn*zn)+(zy*zy)>4){
+        if ((zx*zx)+(zy*zy)>4){
             break;
         }
 
@@ -43,9 +43,13 @@ if (arquivo!= NULL){
     }
     fclose(arquivo);
 }
-
-
+for(int i=0;i<linha;i++){
+    free(resultado_matriz[i]);
 }
+free(resultado_matriz);
+}
+
+
 
 int main(int argc, char *argv[]){
     return 0;
