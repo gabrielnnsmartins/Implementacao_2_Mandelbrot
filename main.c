@@ -3,6 +3,7 @@
 #include<threads.h>
 
 int serial_mandlebot(int coluna, int linha, int max_inter){
+    int resultado_matriz[coluna][linha];
     double dx = 3.0 / coluna;
     double dy = 3.0 / linha;
     
@@ -28,8 +29,22 @@ int serial_mandlebot(int coluna, int linha, int max_inter){
         zy = zy_novo;
         inter+=1;
     }
+    resultado_matriz[col][lin] = (inter*255)/max_inter;
 }
 }
+FILE *arquivo = fopen("mandelbrot_gnm_serial.pgm", "w");
+
+if (arquivo!= NULL){
+    for(int i=0; i<coluna;i++){
+        for(int y=0; y<linha;y++){
+            fprintf(arquivo,"%d ", resultado_matriz[i][y]);
+        }
+        frpintf(arquivo,"\n");
+    }
+    fclose(arquivo);
+}
+
+
 }
 
 int main(int argc, char *argv[]){
