@@ -2,6 +2,7 @@
 #include<stdio.h>
 #include<pthread.h>
 #include<time.h>
+#include<omp.h>
 
 typedef struct{
     int id;
@@ -49,7 +50,7 @@ if (arquivo!= NULL){
         for(int y=0; y<linha;y++){
             fprintf(arquivo,"%d ", resultado_matriz[i][y]);
         }
-        frpintf(arquivo,"\n");
+        fprintf(arquivo,"\n");
     }
     fclose(arquivo);
 }
@@ -60,13 +61,46 @@ free(resultado_matriz);
 }
 
 void mandlebot_dividido_em_pthreads(void *arg){
-    
+    dados_thread *dado = (dados_thread *)arg;
+
+    int coluna = dado->coluna;
+    int linha = dado->linha;
+    int max_interacoes = dado->max_interacoes;
+    int **resultado_matriz = dado->resultado_matriz;
+
+    double dx = 3.0/coluna;
+    double dy = 3.0/linha;
+
+    for(int col= dado->id;col<coluna;col+=dado->num_threads){
+        for(int lin=0;lin<linha;lin++){
+
+        int inter = 0;
+        double x=0.0, y=0.0;
+        double zx=0.0, zy=0.0;
+        x = -2.0 + (col*dx);
+        y = 1.5 - (lin*dy);
+
+        while(inter< max_interacoes){
+        if ((zx*zx)+(zy*zy)>4){
+                break;
+        }
+
+        double zx_novo = ((zx*zx)-(zy*zy))+x;
+        double zy_novo = (2*zx*zy)+y;
+
+        zx = zx_novo;
+        zy = zy_novo;
+        inter+=1;
+    }
+        resultado_matriz[col][lin] = (inter*255)/max_interacoes;
+        }
+    }
 }
 
 void pthreads_mandlebot(int coluna, int linha, int max_inter, int num_threads){
-        int **resultado_matriz = malloc(linha * sizeof(int));
-        for(int i=0;i<linha;i++){
-            int **resultado_matriz=malloc(coluna*sizeof(int));
+        int **resultado_matriz = malloc(coluna * sizeof(int *));
+        for(int i=0;i<coluna;i++){
+            int **resultado_matriz=malloc(linha*sizeof(int));
         }
 
         pthread_t threads[num_threads];
@@ -80,9 +114,30 @@ void pthreads_mandlebot(int coluna, int linha, int max_inter, int num_threads){
             dado_t[i].max_interacoes = max_inter;
             dado_t[i].resultado_matriz = resultado_matriz;
 
-            pthread_create(&threads[i], NULL,mandlebot_dividido_em_pthreads,&dado_t);
+            pthread_create(&threads[i], NULL,mandlebot_dividido_em_pthreads,&dado_t[i]);
         }
+
+        for(int i=0; i<num_threads;i++){
+            pthread_join(&threads[i], NULL);
+        }
+        
+        FILE *arquivo = fopen("mandelbrot_gnm_pthreads.pgm", "w");
+
+    if (arquivo!= NULL){
+        for(int i=0; i<coluna;i++){
+            for(int y=0; y<linha;y++){
+                fprintf(arquivo,"%d ", resultado_matriz[i][y]);
+        }
+            fprintf(arquivo,"\n");
+        }
+    fclose(arquivo);
+    }
+    for(int i=0;i<coluna;i++){
+        free(resultado_matriz[i]);
+    }
+    free(resultado_matriz);
 }
+
 
 
 
@@ -100,6 +155,12 @@ int main(int argc, char *argv[]){
 
     double tempo_serial = (double) (fim_serial - inicio_serial) / CLOCKS_PER_SEC;
     tempos[0] = tempo_serial;
+
+    clock_t inicio_pthreads1 = clock();
+    pthreads_mandlebot(largura,altura,max_interacoes,num_threads);
+    clock_t fim_pthreads1 = clock();
+
+    double tempo_pthreads1 = (double) (fim_serial - inicio_serial)/CLOCKS_PER_SEC;
 
 
 
