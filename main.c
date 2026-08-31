@@ -176,7 +176,7 @@ void openmp_mandlebot(int coluna, int linha, int max_inter, int num_threads){
         inter+=1;
     }
 
-    resultado_matriz[lin][col] = (inter*255)/max_interacoes;
+    resultado_matriz[lin][col] = (inter*255)/max_inter;
     }
     }
 
@@ -228,7 +228,13 @@ int main(int argc, char *argv[]){
 
     double tempo_openmp = (double) (fim_openmp - inicio_openmp)/CLOCKS_PER_SEC;
 
+    FILE *arquivo = fopen("times.txt", "w");
 
+    if (arquivo!=NULL){
+        
+    }
+
+    fclose(arquivo);
 
     return 0;
 }
