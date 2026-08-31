@@ -6,12 +6,13 @@
 typedef struct{
     int id;
     int num_threads;
-    int inicio;
-    int fim;
+    int linha;
+    int coluna;
+    int max_interacoes;
     int **resultado_matriz;
 }dados_thread;
 
-void serial_mandlebot(int coluna, int linha, int max_inter){
+void serial_mandlebot(int linha, int coluna, int max_inter){
     int resultado_matriz[coluna][linha];
     double dx = 3.0 / coluna;
     double dy = 3.0 / linha;
@@ -58,12 +59,49 @@ for(int i=0;i<linha;i++){
 free(resultado_matriz);
 }
 
-void pthreads_mandlebot(int coluna, int linha, int max_inter, int num_threads){
+void mandlebot_dividido_em_pthreads(void *arg){
+    
+}
 
+void pthreads_mandlebot(int coluna, int linha, int max_inter, int num_threads){
+        int **resultado_matriz = malloc(linha * sizeof(int));
+        for(int i=0;i<linha;i++){
+            int **resultado_matriz=malloc(coluna*sizeof(int));
+        }
+
+        pthread_t threads[num_threads];
+        dados_thread dado_t[num_threads];
+
+        for (int i=0; i<num_threads;i++){
+            dado_t[i].id = i;
+            dado_t[i].num_threads = num_threads;
+            dado_t[i].linha = linha;
+            dado_t[i].coluna = coluna;
+            dado_t[i].max_interacoes = max_inter;
+            dado_t[i].resultado_matriz = resultado_matriz;
+
+            pthread_create(&threads[i], NULL,mandlebot_dividido_em_pthreads,&dado_t);
+        }
 }
 
 
 
 int main(int argc, char *argv[]){
+    int altura = atoi(argv[0]);
+    int largura = atoi(argv[1]);
+    int max_interacoes = atoi(argv[2]);
+    int num_threads = atoi(argv[3]);
+
+    double *tempos = malloc(4 * sizeof(int));
+
+    clock_t inicio_serial = clock();
+    serial_mandlebot(altura,largura,max_interacoes);
+    clock_t fim_serial = clock();
+
+    double tempo_serial = (double) (fim_serial - inicio_serial) / CLOCKS_PER_SEC;
+    tempos[0] = tempo_serial;
+
+
+
     return 0;
 }
