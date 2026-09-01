@@ -66,6 +66,15 @@ free(resultado_matriz);
 
 void mandlebolt_dividido_em_pthreads2(void *arg){
     dados_thread *dado = (dados_thread *)arg;
+
+    int coluna = dado->coluna;
+    int linha = dado->linha;
+    int num_threads = dado->num_threads;
+    int max_interacoes = dado->max_interacoes;
+    int **resultado_matriz = dado->resultado_matriz;
+    int linhas_por_thread = linha/num_threads;
+
+    for(int i=0;i<)
 }
 
 void mandlebot_dividido_em_pthreads(void *arg){
@@ -129,7 +138,7 @@ void pthreads_mandlebolt1(int coluna, int linha, int max_inter, int num_threads)
             pthread_join(&threads[i], NULL);
         }
         
-        FILE *arquivo = fopen("mandelbrot_gnm_pthreads.pgm", "w");
+        FILE *arquivo = fopen("mandelbrot_gnm_pthreads1.pgm", "w");
 
     if (arquivo!= NULL){
         for(int i=0; i<linha;i++){
