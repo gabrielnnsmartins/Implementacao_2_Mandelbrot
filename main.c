@@ -297,6 +297,8 @@ int main(int argc, char *argv[]){
     int max_interacoes = atoi(argv[2]);
     int num_threads = atoi(argv[3]);
 
+    if(altura>0 && largura>0 && max_interacoes>0 && num_threads>0){
+
     clock_t inicio_serial = clock();
     serial_mandlebot(altura,largura,max_interacoes);
     clock_t fim_serial = clock();
@@ -338,6 +340,8 @@ int main(int argc, char *argv[]){
     }
 
     fclose(arquivo);
+
+}
 
     return 0;
 }
