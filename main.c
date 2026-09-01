@@ -71,13 +71,49 @@ void mandlebolt_dividido_em_pthreads2(void *arg){
     int linha = dado->linha;
     int num_threads = dado->num_threads;
     int max_interacoes = dado->max_interacoes;
+    int id = dado->id;
     int **resultado_matriz = dado->resultado_matriz;
-    int linhas_por_thread = linha/num_threads;
 
-    for(int i=0;i<)
+    double dx = 3.0/coluna;
+    double dy = 3.0/linha;
+
+    int linhas_por_thread = linha/num_threads;
+    int linha_inicial = id * linhas_por_thread;
+    int linha_final = 0;
+
+    if (id == num_threads-1){
+        linha_final = linha;
+    }else{
+        linha_final = linha_inicial + linhas_por_thread;
+    }
+
+    for(int i=linha_inicial;i<linha_final;i++){
+        for(int y=0;y<coluna;y++){
+
+            int inter = 0;
+            double x=0.0, y=0.0;
+            double zx=0.0, zy=0.0;
+            x = -2.0 + (col*dx);
+            y = 1.5 - (lin*dy);
+
+            while(inter< max_interacoes){
+            if ((zx*zx)+(zy*zy)>4){
+                    break;
+            }
+
+            double zx_novo = ((zx*zx)-(zy*zy))+x;
+            double zy_novo = (2*zx*zy)+y;
+
+            zx = zx_novo;
+            zy = zy_novo;
+            inter+=1;
+        }
+            resultado_matriz[lin][col] = (inter*255)/max_interacoes;
+        }
+    }
 }
 
-void mandlebot_dividido_em_pthreads(void *arg){
+void mandlebolt_dividido_em_pthreads1(void *arg){
     dados_thread *dado = (dados_thread *)arg;
 
     int coluna = dado->coluna;
@@ -131,7 +167,7 @@ void pthreads_mandlebolt1(int coluna, int linha, int max_inter, int num_threads)
             dado_t[i].max_interacoes = max_inter;
             dado_t[i].resultado_matriz = resultado_matriz;
 
-            pthread_create(&threads[i], NULL,mandlebot_dividido_em_pthreads,&dado_t[i]);
+            pthread_create(&threads[i], NULL,mandlebolt_dividido_em_pthreads1,&dado_t[i]);
         }
 
         for(int i=0; i<num_threads;i++){
@@ -139,6 +175,47 @@ void pthreads_mandlebolt1(int coluna, int linha, int max_inter, int num_threads)
         }
         
         FILE *arquivo = fopen("mandelbrot_gnm_pthreads1.pgm", "w");
+
+    if (arquivo!= NULL){
+        for(int i=0; i<linha;i++){
+            for(int y=0; y<coluna;y++){
+                fprintf(arquivo,"%d ", resultado_matriz[i][y]);
+        }
+            fprintf(arquivo,"\n");
+        }
+    fclose(arquivo);
+    }
+    for(int i=0;i<linha;i++){
+        free(resultado_matriz[i]);
+    }
+    free(resultado_matriz);
+}
+
+void pthreads_mandlebolt2(int coluna, int linha, int max_inter, int num_threads){
+        int **resultado_matriz = malloc(linha * sizeof(int *));
+        for(int i=0;i<linha;i++){
+           resultado_matriz=malloc(coluna*sizeof(int));
+        }
+
+        pthread_t threads[num_threads];
+        dados_thread dado_t[num_threads];
+
+        for (int i=0; i<num_threads;i++){
+            dado_t[i].id = i;
+            dado_t[i].num_threads = num_threads;
+            dado_t[i].linha = linha;
+            dado_t[i].coluna = coluna;
+            dado_t[i].max_interacoes = max_inter;
+            dado_t[i].resultado_matriz = resultado_matriz;
+
+            pthread_create(&threads[i], NULL,mandlebolt_dividido_em_pthreads2,&dado_t[i]);
+        }
+
+        for(int i=0; i<num_threads;i++){
+            pthread_join(&threads[i], NULL);
+        }
+        
+        FILE *arquivo = fopen("mandelbrot_gnm_pthreads2.pgm", "w");
 
     if (arquivo!= NULL){
         for(int i=0; i<linha;i++){
@@ -237,6 +314,12 @@ int main(int argc, char *argv[]){
     clock_t fim_openmp = clock();
 
     double tempo_openmp = (double) (fim_openmp - inicio_openmp)/CLOCKS_PER_SEC;
+
+    clock_t inicio_pthreads2 = clock();
+    pthreads_mandlebolt2(largura,altura,max_interacoes,num_threads);
+    clock_t fim_pthreads2 = clock();
+
+    double tempo_pthreads2 = (double) (fim_pthreads2 - inicio_pthreads2)/CLOCKS_PER_SEC;
 
     FILE *arquivo = fopen("times.txt", "w");
 
