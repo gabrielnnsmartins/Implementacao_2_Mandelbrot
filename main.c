@@ -64,6 +64,10 @@ for(int i=0;i<linha;i++){
 free(resultado_matriz);
 }
 
+void mandlebolt_dividido_em_pthreads2(void *arg){
+    dados_thread *dado = (dados_thread *)arg;
+}
+
 void mandlebot_dividido_em_pthreads(void *arg){
     dados_thread *dado = (dados_thread *)arg;
 
@@ -101,7 +105,7 @@ void mandlebot_dividido_em_pthreads(void *arg){
     }
 }
 
-void pthreads_mandlebot(int coluna, int linha, int max_inter, int num_threads){
+void pthreads_mandlebolt1(int coluna, int linha, int max_inter, int num_threads){
         int **resultado_matriz = malloc(linha * sizeof(int *));
         for(int i=0;i<linha;i++){
            resultado_matriz=malloc(coluna*sizeof(int));
@@ -214,7 +218,7 @@ int main(int argc, char *argv[]){
     double tempo_serial = (double) (fim_serial - inicio_serial) / CLOCKS_PER_SEC;
 
     clock_t inicio_pthreads1 = clock();
-    pthreads_mandlebot(largura,altura,max_interacoes,num_threads);
+    pthreads_mandlebolt1(largura,altura,max_interacoes,num_threads);
     clock_t fim_pthreads1 = clock();
 
     double tempo_pthreads1 = (double) (fim_serial - inicio_serial)/CLOCKS_PER_SEC;
