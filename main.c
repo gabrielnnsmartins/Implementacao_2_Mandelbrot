@@ -207,14 +207,11 @@ int main(int argc, char *argv[]){
     int max_interacoes = atoi(argv[2]);
     int num_threads = atoi(argv[3]);
 
-    double *tempos = malloc(4 * sizeof(int));
-
     clock_t inicio_serial = clock();
     serial_mandlebot(altura,largura,max_interacoes);
     clock_t fim_serial = clock();
 
     double tempo_serial = (double) (fim_serial - inicio_serial) / CLOCKS_PER_SEC;
-    tempos[0] = tempo_serial;
 
     clock_t inicio_pthreads1 = clock();
     pthreads_mandlebot(largura,altura,max_interacoes,num_threads);
@@ -231,7 +228,17 @@ int main(int argc, char *argv[]){
     FILE *arquivo = fopen("times.txt", "w");
 
     if (arquivo!=NULL){
-        
+        for (int i=0;i<4;i++){
+            if(i==0){
+                fprintf("Serial: %fs\n", &tempo_serial);
+            }else if(i==1){
+                fprintf("OpenMP: %fs\n",&tempo_openmp);
+            }else if(i==2){
+                fprintf("Pthreads1: %fs\n", &tempo_pthreads1);
+            }else if (i==3){
+                fprintf("Pthreads2: %fs", &tempo_pthreads2);
+            }
+        }
     }
 
     fclose(arquivo);
