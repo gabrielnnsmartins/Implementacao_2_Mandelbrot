@@ -167,11 +167,11 @@ void pthreads_mandlebolt1(int coluna, int linha, int max_inter, int num_threads)
             dado_t[i].max_interacoes = max_inter;
             dado_t[i].resultado_matriz = resultado_matriz;
 
-            pthread_create(&threads[i], NULL,mandlebolt_dividido_em_pthreads1,&dado_t[i]);
+            pthread_create(threads[i], NULL,mandlebolt_dividido_em_pthreads1,&dado_t[i]);
         }
 
         for(int i=0; i<num_threads;i++){
-            pthread_join(&threads[i], NULL);
+            pthread_join(threads[i], NULL);
         }
         
         FILE *arquivo = fopen("mandelbrot_gnm_pthreads1.pgm", "w");
@@ -208,11 +208,11 @@ void pthreads_mandlebolt2(int coluna, int linha, int max_inter, int num_threads)
             dado_t[i].max_interacoes = max_inter;
             dado_t[i].resultado_matriz = resultado_matriz;
 
-            pthread_create(&threads[i], NULL,mandlebolt_dividido_em_pthreads2,&dado_t[i]);
+            pthread_create(threads[i], NULL,mandlebolt_dividido_em_pthreads2,&dado_t[i]);
         }
 
         for(int i=0; i<num_threads;i++){
-            pthread_join(&threads[i], NULL);
+            pthread_join(threads[i], NULL);
         }
         
         FILE *arquivo = fopen("mandelbrot_gnm_pthreads2.pgm", "w");
@@ -328,13 +328,13 @@ int main(int argc, char *argv[]){
     if (arquivo!=NULL){
         for (int i=0;i<4;i++){
             if(i==0){
-                fprintf("Serial: %fs\n", &tempo_serial);
+                fprintf(arquivo,"Serial: %fs\n", tempo_serial);
             }else if(i==1){
-                fprintf("OpenMP: %fs\n",&tempo_openmp);
+                fprintf(arquivo,"OpenMP: %fs\n",tempo_openmp);
             }else if(i==2){
-                fprintf("Pthreads1: %fs\n", &tempo_pthreads1);
+                fprintf(arquivo,"Pthreads1: %fs\n", tempo_pthreads1);
             }else if (i==3){
-                fprintf("Pthreads2: %fs", &tempo_pthreads2);
+                fprintf(arquivo,"Pthreads2: %fs", tempo_pthreads2);
             }
         }
     }
