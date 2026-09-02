@@ -87,8 +87,8 @@ void mandlebolt_dividido_em_pthreads2(void *arg){
         linha_final = linha_inicial + linhas_por_thread;
     }
 
-    for(int i=linha_inicial;i<linha_final;i++){
-        for(int y=0;y<coluna;y++){
+    for(int lin=linha_inicial;lin<linha_final;lin++){
+        for(int col=0;col<coluna;col++){
 
             int inter = 0;
             double x=0.0, y=0.0;
