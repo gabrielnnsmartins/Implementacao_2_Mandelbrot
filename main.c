@@ -299,8 +299,8 @@ int main(int argc, char *argv[]){
         return 0;
     }else{
 
-    int altura = atoi(argv[1]);
-    int largura = atoi(argv[2]);
+    int altura = atoi(argv[2]);
+    int largura = atoi(argv[1]);
     int max_interacoes = atoi(argv[3]);
     int num_threads = atoi(argv[4]);
 
