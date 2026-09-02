@@ -16,7 +16,7 @@ typedef struct{
 void serial_mandlebot(int linha, int coluna, int max_inter){
     int **resultado_matriz = malloc(linha * sizeof(int *));
         for(int i=0;i<linha;i++){
-           resultado_matriz=malloc(coluna*sizeof(int));
+           resultado_matriz[i]=malloc(coluna*sizeof(int));
         }
         
     double dx = 3.0 / coluna;
@@ -50,8 +50,8 @@ void serial_mandlebot(int linha, int coluna, int max_inter){
 FILE *arquivo = fopen("mandelbrot_gnm_serial.pgm", "w");
 
 if (arquivo!= NULL){
-    for(int i=0; i<coluna;i++){
-        for(int y=0; y<linha;y++){
+    for(int i=0; i<linha;i++){
+        for(int y=0; y<coluna;y++){
             fprintf(arquivo,"%d ", resultado_matriz[i][y]);
         }
         fprintf(arquivo,"\n");
@@ -153,7 +153,7 @@ void mandlebolt_dividido_em_pthreads1(void *arg){
 void pthreads_mandlebolt1(int coluna, int linha, int max_inter, int num_threads){
         int **resultado_matriz = malloc(linha * sizeof(int *));
         for(int i=0;i<linha;i++){
-           resultado_matriz=malloc(coluna*sizeof(int));
+           resultado_matriz[i]=malloc(coluna*sizeof(int));
         }
 
         pthread_t threads[num_threads];
